@@ -22,7 +22,7 @@ products.forEach((product) => {
           </div>
 
           <div class="product-price">
-            $${(product.priceInCents / 100).toFixed(2)}
+            $${(product.priceCents / 100).toFixed(2)}
           </div>
 
           <div class="product-quantity-container">
@@ -47,10 +47,36 @@ products.forEach((product) => {
             Added
           </div>
 
-          <button class="add-to-cart-button button-primary">
+          <button class="add-to-cart-button button-primary js-add-to-cart" data-product-id = "${product.id}">
             Add to Cart
           </button>
         </div>`;
 });
 
 document.querySelector('.js-products-grid').innerHTML = productsHTML;
+
+document.querySelectorAll('.js-add-to-cart').forEach((button) => {
+    // data attribute -> data-any-name can be used to attach any random data to an element, 
+    // which can be viewed by dataset property of an object
+    button.addEventListener('click', () => {
+        const productId = button.dataset.productId;
+        let matchingItem;
+        
+        cart.forEach((item) => {
+            if (productId === item.productId) {
+                matchingItem = item;
+                return;
+            }
+        });
+
+        if (matchingItem) {
+            matchingItem.quantity++;
+        } else {
+            cart.push({
+                productId, 
+                quantity: 1
+            });
+        }
+        console.log(cart);
+    });
+});
