@@ -5,8 +5,23 @@ import dayjs from 'https://unpkg.com/dayjs@1.11.10/esm/index.js' // ESM Library 
 // here curly braces are not used because dayjs uses default export 
 // default export is used when we only want to export 1 thing from a file
 import {deliveryOptions, getDeliveryOption} from '../../data/deliveryOptions.js'
+import { renderPaymentSummary } from './paymentSummary.js';
+
 
 export function renderOrderSummary() {
+  function updateCartQuantity() {
+    let cartQuantity = 0;
+
+    cart.forEach((item) => {
+        cartQuantity += item.quantity;
+    });
+
+    document.querySelector('.js-checkout-cart-quantity').innerHTML = cartQuantity;
+  }
+
+  updateCartQuantity();
+
+
   let cartSummaryHTML = '';
 
   cart.forEach((cartItem) => {
@@ -102,6 +117,8 @@ export function renderOrderSummary() {
       removeFromCart(productId);
       const container = document.querySelector(`.js-cart-item-container-${productId}`);
       container.remove();
+      renderPaymentSummary();
+      updateCartQuantity();
     });
   });
 
@@ -111,7 +128,10 @@ export function renderOrderSummary() {
       const {productId, deliveryOptionId} = element.dataset;
       updateDeliveryOption(productId, deliveryOptionId);
       renderOrderSummary();
+      renderPaymentSummary();
     });
   });
+    
+
 }
 
