@@ -1,4 +1,4 @@
-import {cart, removeFromCart} from '../data/cart.js'; // using named export here
+import {cart, removeFromCart, updateDeliveryOption} from '../data/cart.js'; // using named export here
 import {products} from '../data/products.js';
 import formatCurrency from './utils/money.js' // using default export here
 import dayjs from 'https://unpkg.com/dayjs@1.11.10/esm/index.js' // ESM Library is an external library in a module format (has export before function definition)
@@ -30,7 +30,7 @@ cart.forEach((cartItem) => {
       }
     });
 
-    console.log(deliveryOption);
+    
 
     const today = dayjs();
     const deliveryDate = today.add(deliveryOption.deliveryDays, 'days');
@@ -86,7 +86,9 @@ function deliveryOptionsHTML(matchingProduct, cartItem) {
     
     const isChecked = deliveryOption.id === cartItem.deliveryOptionId;
     
-    html += `<div class="delivery-option">
+    html += `<div class="delivery-option js-delivery-option" 
+    data-product-id = "${matchingProduct.id}" 
+    data-delivery-option-id = "${deliveryOption.id}">
     <input type="radio" ${isChecked ? 'checked' : ''}
       class="delivery-option-input"
       name="delivery-option-${matchingProduct.id}">
@@ -112,5 +114,13 @@ document.querySelectorAll('.js-delete-link').forEach((link) => {
     removeFromCart(productId);
     const container = document.querySelector(`.js-cart-item-container-${productId}`);
     container.remove();
+  });
+});
+
+
+document.querySelectorAll('.js-delivery-option').forEach((element) => {
+  element.addEventListener('click', () => {
+    const {productId, deliveryOptionId} = element.dataset;
+    updateDeliveryOption(productId, deliveryOptionId);
   });
 });
